@@ -169,52 +169,47 @@ with open(csv_file,"w",newline="") as file:
 print(f"The CSV file '{csv_file}' has been created with student data.")
 
 
-# Write a Python program using tkinter library to create a GUI to enter registration 
-# details for an event.
+#Write a Python program using tkinter library to create a GUI to enter registration 
+#details for an event. 
 import tkinter as tk
 from tkinter import ttk
 
+# Create the main application window
 root = tk.Tk()
-root.title("Registration Form")
+root.title("Event Registration Form")
 root.geometry("400x350")
 
-# Function to submit the form
+# Function to handle form submission
 def submit_form():
     name = entry_name.get()
     email = entry_email.get()
     contact = entry_contact.get()
     event = event_var.get()
 
-    if name == "" or email == "" or contact == "" or event == "Select Event":
+    if name == "" or email == "" or contact == "" or event == "":
         result_label.config(text="Please fill in all fields.", foreground="red")
     else:
-        result_label.config(
-            text=f"Registration successful!\nName: {name}\nEmail: {email}\nContact: {contact}\nEvent: {event}",
-            foreground="green"
-        )
+        result_label.config(text=f"Registration successful!\nName: {name}\nEmail: {email}\nContact: {contact}\nEvent: {event}", foreground="green")
         clear_form()
 
-# Function to clear the form fields
+# Function to clear form fields
 def clear_form():
     entry_name.delete(0, tk.END)
     entry_email.delete(0, tk.END)
     entry_contact.delete(0, tk.END)
     event_var.set("Select Event")
 
-# Corrected font argument to use a tuple for font
-ttk.Label(root, text="Event Registration Form", font=('sans-serif', 16)).pack(pady=10)
+# Create and place labels, entry fields, and buttons using ttk
+ttk.Label(root, text="Event Registration Form", font=('Helvetica', 16)).pack(pady=10)
 
-# Name field
 ttk.Label(root, text="Name").pack()
 entry_name = ttk.Entry(root, width=40)
 entry_name.pack()
 
-# Email field
 ttk.Label(root, text="Email").pack()
 entry_email = ttk.Entry(root, width=40)
 entry_email.pack()
 
-# Contact field
 ttk.Label(root, text="Contact").pack()
 entry_contact = ttk.Entry(root, width=40)
 entry_contact.pack()
@@ -237,7 +232,6 @@ result_label.pack(pady=20)
 
 # Run the application
 root.mainloop()
-
 
 
 #CSV WITH TKINTER CODE 
@@ -491,3 +485,49 @@ text_display.pack(padx=10, pady=10)
 
 # Run the application
 root.mainloop()
+
+
+# Age Calculator
+import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
+
+# Function to calculate age
+def calculate_age():
+    try:
+        # Get the DOB from the input field
+        dob = entry_dob.get()
+        dob_date = datetime.strptime(dob, "%Y-%m-%d")  # Parse DOB in YYYY-MM-DD format
+        today = datetime.today()  # Get the current date
+
+        # Calculate age
+        age = today.year - dob_date.year
+        # Adjust if the birthday hasn't occurred yet this year
+        if (today.month, today.day) < (dob_date.month, dob_date.day):
+            age -= 1
+
+        # Display the age
+        label_result.config(text=f"Your Age: {age} years")
+
+    except ValueError:
+        label_result.config(text="Invalid Date Format! Use YYYY-MM-DD")
+
+# Create the main application window
+root = tk.Tk()
+root.title("Age Calculator")
+
+# Label and entry for DOB
+tk.Label(root, text="Enter Date of Birth (YYYY-MM-DD):").grid(row=0, column=0, padx=10, pady=10)
+entry_dob = ttk.Entry(root, width=15)
+entry_dob.grid(row=0, column=1, padx=10, pady=10)
+
+# Button to calculate age
+tk.Button(root, text="Calculate Age", command=calculate_age).grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+# Label to display the result
+label_result = tk.Label(root, text="Your Age: ")
+label_result.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+
+# Run the application
+root.mainloop()
+
