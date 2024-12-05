@@ -234,103 +234,110 @@ result_label.pack(pady=20)
 root.mainloop()
 
 
-#CSV WITH TKINTER CODE 
 import tkinter as tk
 from tkinter import ttk
 import csv
 import os
 
 class LabelInput(tk.Frame):
-    '''A widget that pairs a label with an input widget(Entry,Spinbox, etc).'''
-    def _init_(self,parent,label,input_class=tk.Entry,**input_args):
-        super()._init_(parent)
+    '''A widget that pairs a label with an input widget (Entry, Spinbox, etc).'''
+    def __init__(self, parent, label, input_class=tk.Entry, **input_args):
+        super().__init__(parent)
         
-        #Create the label
-        self.label=tk.Label(self,text=label)
-        self.label.pack(side="left",padx=(0,10))
+        # Create the label
+        self.label = tk.Label(self, text=label)
+        self.label.pack(side="left", padx=(0, 10))
         
-        #Create the input widget(defaults to ENtry)
-        self.input=input_class(self,**input_args)
-        self.input.pack(side="right",fill="x",expand=True)
-        
+        # Create the input widget (defaults to Entry)
+        self.input = input_class(self, **input_args)
+        self.input.pack(side="right", fill="x", expand=True)
 
 class MyApp:
-    def _init_(self,root):
-        self.root=root
+    def __init__(self, root):
+        self.root = root
         self.root.title("Form App")
         
-        #Define the CSV file name
-        self.filename="form_data.csv"
+        # Define the CSV file name
+        self.filename = "form_data.csv"
         
-        #Create a frame to hold the form
-        self.form=tk.Frame(root)
-        self.form.pack(padx=10,pady=10)
+        # Create a frame to hold the form
+        self.form = tk.Frame(root)
+        self.form.pack(padx=10, pady=10)
         
-        #Create form inputs using LabelInput Class
-        self.name_input=LabelInput(self.form,"Name")
+        # Create form inputs using LabelInput Class
+        self.name_input = LabelInput(self.form, "Name")
         self.name_input.pack(pady=5)
         
-        self.age_input=LabelInput(self.form,"Age", input_class=tk.Spinbox, from_=0,to=100)
+        self.age_input = LabelInput(self.form, "Age", input_class=tk.Spinbox, from_=0, to=100)
         self.age_input.pack(pady=5)
         
-        self.gender=LabelInput(self.form,"Gender:",input_class=ttk.Combobox,values=["Male","Female","Others"])
-        self.gender.pack(padx=5)
+        self.gender = LabelInput(self.form, "Gender", input_class=ttk.Combobox, values=["Male", "Female", "Others"], state="readonly")
+        self.gender.pack(pady=5)
         
-        #CHeckbutton
-        self.newsletter_var=tk.BooleanVar()
-        self.newsletter_input=LabelInput(self.form,"Subscribe to Newsletter:",tk.Checkbutton,variable = self.newsletter_var)
-        self.newsletter_input.pack(fill="x")
+        # Checkbutton for Newsletter Subscription
+        self.newsletter_var = tk.BooleanVar()
+        self.newsletter_input = LabelInput(self.form, "Subscribe to Newsletter", tk.Checkbutton, variable=self.newsletter_var)
+        self.newsletter_input.pack(fill="x", pady=5)
         
+        # Education Radio Buttons
         self.val = tk.StringVar()
         self.education_frame = tk.Frame(self.form)
         self.education_frame.pack(pady=5)
-        self.radio1 = tk.Radiobutton(self.education_frame,text="High School", variable=self.val,value="High School")
-        self.radio2=tk.Radiobutton(self.education_frame, text = "Undergraduate",variable = self.val,value="Undergraduate")
-        self.radio3=tk.Radiobutton(self.education_frame,text="Graduate",variable=self.val,value="Graduate")
-        
-        self.radio1.pack(side="left",padx=5)
+        tk.Label(self.education_frame, text="Education:").pack(side="left")
+        self.radio1 = tk.Radiobutton(self.education_frame, text="High School", variable=self.val, value="High School")
+        self.radio2 = tk.Radiobutton(self.education_frame, text="Undergraduate", variable=self.val, value="Undergraduate")
+        self.radio3 = tk.Radiobutton(self.education_frame, text="Graduate", variable=self.val, value="Graduate")
+        self.radio1.pack(side="left", padx=5)
         self.radio2.pack(side="left", padx=5)
         self.radio3.pack(side="left", padx=5)
         
-        #Create the Submit button 
-        self.submit_button=tk.Button(self.root,text="Submit",command=self.submit_form)
-        self.submit_button.pack(pady=(10,5),side="left",padx=(10,5))
+        # Create the Submit button
+        self.submit_button = tk.Button(self.root, text="Submit", command=self.submit_form)
+        self.submit_button.pack(pady=(10, 5), side="left", padx=(10, 5))
         
-        #Create the reset button 
-        self.reset_button=tk.Button(self.root,text="Reset",command=self.reset_form)
-        self.reset_button.pack(pady=(10,5),side="right",padx=(5,10))
+        # Create the Reset button
+        self.reset_button = tk.Button(self.root, text="Reset", command=self.reset_form)
+        self.reset_button.pack(pady=(10, 5), side="right", padx=(5, 10))
         
     def submit_form(self):
-        '''Submit form: get values anmd write them into a CSV file.'''
+        '''Submit form: get values and write them into a CSV file.'''
         name = self.name_input.input.get()
-        age=self.age_input.input.get()
-        gender=self.gender.input.get()
+        age = self.age_input.input.get()
+        gender = self.gender.input.get()
         subscribe = self.newsletter_var.get()
         education = self.val.get()
         
-        if name == "" or age == "":
+        if not name or not age or not gender or not education:
             print("Please fill in all fields!")
             return
-        #CHeck if the file exists, if not write the header
+        
+        # Check if the file exists, if not write the header
         if not os.path.exists(self.filename):
-            with open(self.filename,mode='w',newline="") as file:
-                writer=csv.writer(file)
-                writer.writerow(["Name","Age","Gender","Subscribe","Education"])#writing the header
-        #Append the data to th e csv file
-        with open(self.filename,mode='a',newline="") as file:
+            with open(self.filename, mode='w', newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["Name", "Age", "Gender", "Subscribe", "Education"])  # Writing the header
+        
+        # Append the data to the CSV file
+        with open(self.filename, mode='a', newline="") as file:
             writer = csv.writer(file)
-            writer.writerow([name,age,gender,subscribe,education])
-        print(f"Data saved: Name: {name},Age:{age},Gender: {gender},Subscribed to Newsletter:{subscribe}, Education: {education}")
-            
-        #Optionally rest the form after submission 
+            writer.writerow([name, age, gender, subscribe, education])
+        print(f"Data saved: Name: {name}, Age: {age}, Gender: {gender}, Subscribed to Newsletter: {subscribe}, Education: {education}")
+        
+        # Optionally reset the form after submission
         self.reset_form()
+        
     def reset_form(self):
         '''Reset form: clear all input fields.'''
-        self.name_input.input.delete(0,tk.END)
-#Initialize the Tkinter app
+        self.name_input.input.delete(0, tk.END)
+        self.age_input.input.delete(0, tk.END)
+        self.gender.input.set("")
+        self.newsletter_var.set(False)
+        self.val.set("")
+        
+# Initialize the Tkinter app
 root = tk.Tk()
-app = MyApp()
-root.mainloop()   
+app = MyApp(root)
+root.mainloop()
 
 
 #CALCULATOR CODE TKINTER 
